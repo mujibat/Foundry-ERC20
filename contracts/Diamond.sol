@@ -12,8 +12,11 @@ import {LibDiamond} from "./libraries/LibDiamond.sol";
 import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
 
 contract Diamond {
-    constructor(address _contractOwner, address _diamondCutFacet) payable {
+    constructor(address _contractOwner, address _diamondCutFacet, string memory _name,
+        string memory _symbol
+       ) payable {
         LibDiamond.setContractOwner(_contractOwner);
+        LibDiamond.setERC20Details(_name, _symbol);
 
         // Add the diamondCut external function from the diamondCutFacet
         IDiamondCut.FacetCut[] memory cut = new IDiamondCut.FacetCut[](1);
@@ -25,6 +28,7 @@ contract Diamond {
             functionSelectors: functionSelectors
         });
         LibDiamond.diamondCut(cut, address(0), "");
+        
     }
 
     // Find facet for function that is called and execute the

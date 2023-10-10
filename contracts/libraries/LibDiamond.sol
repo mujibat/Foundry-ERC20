@@ -47,6 +47,37 @@ library LibDiamond {
         mapping(bytes4 => bool) supportedInterfaces;
         // owner of the contract
         address contractOwner;
+
+        //erc20 storage
+        
+         
+
+    /*//////////////////////////////////////////////////////////////
+                            METADATA STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    string name;
+
+    string  symbol;
+
+  
+
+    /*//////////////////////////////////////////////////////////////
+                              ERC20 STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    uint256 totalSupply;
+
+    mapping(address => uint256) balanceOf;
+
+    mapping(address => mapping(address => uint256)) allowance;
+
+    /*//////////////////////////////////////////////////////////////
+                            EIP-2612 STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+
+    mapping(address => uint256) nonces;
     }
 
     function diamondStorage()
@@ -70,6 +101,11 @@ library LibDiamond {
         address previousOwner = ds.contractOwner;
         ds.contractOwner = _newOwner;
         emit OwnershipTransferred(previousOwner, _newOwner);
+    }
+    function setERC20Details(string memory _name, string memory _symbol) internal {
+        DiamondStorage storage ds = diamondStorage();
+        ds.name = _name;
+        ds.symbol = _symbol;  
     }
 
     function contractOwner() internal view returns (address contractOwner_) {
