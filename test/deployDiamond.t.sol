@@ -5,11 +5,12 @@ import "../contracts/interfaces/IDiamondCut.sol";
 import "../contracts/facets/DiamondCutFacet.sol";
 import "../contracts/facets/DiamondLoupeFacet.sol";
 import "../contracts/facets/OwnershipFacet.sol";
-import "forge-std/Test.sol";
 import "../contracts/Diamond.sol";
 import "../contracts/facets/ERC20Facet.sol";
 
-contract DiamondDeployer is Test, IDiamondCut {
+import "./helpers/DiamondUtils.sol";
+
+contract DiamondDeployer is DiamondUtils, IDiamondCut {
     //contract types of facets to be deployed
     Diamond diamond;
     DiamondCutFacet dCutFacet;
@@ -62,17 +63,6 @@ contract DiamondDeployer is Test, IDiamondCut {
 
     function testName() public {
         assertEq(ERC20Facet(address(diamond)).name(), 'DOLAPO');
-    }
-
-    function generateSelectors(
-        string memory _facetName
-    ) internal returns (bytes4[] memory selectors) {
-        string[] memory cmd = new string[](3);
-        cmd[0] = "node";
-        cmd[1] = "scripts/genSelectors.js";
-        cmd[2] = _facetName;
-        bytes memory res = vm.ffi(cmd);
-        selectors = abi.decode(res, (bytes4[]));
     }
 
     function diamondCut(
