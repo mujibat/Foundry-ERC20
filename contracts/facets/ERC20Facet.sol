@@ -2,6 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { LibDiamond } from "../libraries/LibDiamond.sol";
+import "forge-std/console2.sol";
 
 /// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC20.sol)
@@ -59,6 +60,23 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
         return ds.name;
     }
 
+    function symbol() public view virtual returns (string memory) {
+      LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+        return ds.symbol;  
+    }
+
+    function mint(address to, uint amount) public {
+        _mint(to, amount);
+    }
+      function burn(address from, uint amount) public {
+        _burn(from, amount);
+    }
+
+    function balanceOf(address owner) public view virtual returns (uint) {
+       LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+       return ds.balanceOf[owner]; 
+    }
+
     function approve(address spender, uint256 amount) public virtual returns (bool) {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds.allowance[msg.sender][spender] = amount;
@@ -90,10 +108,13 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
     ) public virtual returns (bool) {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         uint256 allowed = ds.allowance[from][msg.sender]; // Saves gas for limited approvals.
-
+        console2.logString("logging logger");
+        console2.logUint(allowed);
+        console2.logUint(amount);
         if (allowed != type(uint256).max) ds.allowance[from][msg.sender] = allowed - amount;
 
         ds.balanceOf[from] -= amount;
+
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.

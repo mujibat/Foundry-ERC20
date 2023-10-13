@@ -64,6 +64,47 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
     function testName() public {
         assertEq(ERC20Facet(address(diamond)).name(), 'DOLAPO');
     }
+       function testSymbol() public {
+        assertEq(ERC20Facet(address(diamond)).symbol(), 'DLP');
+    }
+
+    function testTransfer() public {
+        vm.startPrank(address(0x1111));
+        ERC20Facet(address(diamond)).mint(address(0x1111), 1000e18);
+        ERC20Facet(address(diamond)).transfer(address(0x2222), 100e18);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(0x1111)), 900e18);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(0x2222)), 100e18);
+        vm.stopPrank();
+    }
+
+    function testMint() public {
+         vm.startPrank(address(0x1111));
+        ERC20Facet(address(diamond)).mint(address(0x1111), 1000e18);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(0x1111)), 1000e18);
+    }
+
+    function testBurn() public {
+       vm.startPrank(address(0x1111));
+        ERC20Facet(address(diamond)).mint(address(0x1111), 1000e18);
+        ERC20Facet(address(diamond)).burn(address(0x1111), 100e18);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(0x1111)), 900e18); 
+    }
+
+    function testApprove() public {
+       vm.startPrank(address(0x1111));
+        ERC20Facet(address(diamond)).mint(address(0x1111), 10000);
+        ERC20Facet(address(diamond)).approve(address(0x2222), 100); 
+    }
+
+    function testTransferFrom() public {
+        vm.startPrank(address(0x1111));
+        ERC20Facet(address(diamond)).mint(address(0x1111), 10000);
+        ERC20Facet(address(diamond)).approve(address(diamond), 100);
+        vm.startPrank(address(diamond));
+        ERC20Facet(address(diamond)).transferFrom(address(0x1111), address(0x2222), 1);
+
+    }
+    
 
     function diamondCut(
         FacetCut[] calldata _diamondCut,
